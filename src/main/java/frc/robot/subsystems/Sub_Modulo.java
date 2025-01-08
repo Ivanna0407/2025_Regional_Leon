@@ -110,7 +110,7 @@ public class Sub_Modulo extends SubsystemBase {
         //y obtener la ruta más rápida 
         state.optimize(enoderrotation);
         
-        driveMotor.set(state.speedMetersPerSecond/3.5);//3.5 es la velocidad máxima del sistema, se debe checar, 4.47 teorico
+        driveMotor.set(state.speedMetersPerSecond/2);//3.5 es la velocidad máxima del sistema, se debe checar, 4.47 teorico
         //https://www.chiefdelphi.com/t/how-to-calculate-the-max-free-speed-of-a-swerve/400741/4
         turningMotor.set(PIDgiro.calculate(getTurningPosition(),state.angle.getRadians()));
         

@@ -4,8 +4,6 @@
 
 package frc.robot.subsystems;
 
-import java.lang.reflect.Field;
-
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
@@ -14,11 +12,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Swerve;
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -39,11 +34,11 @@ import com.studica.frc.AHRS.NavXComType;
 public class Sub_Swerve extends SubsystemBase {
   //En este subsistema se unen los 4 modulos y el giroscopio 
   private final Sub_Modulo Modulo_1 = new Sub_Modulo(3, 4, true, true, 10, true);
-  private final Sub_Modulo Modulo_2 = new Sub_Modulo(1, 22, true, true, 9,  true);
+  private final Sub_Modulo Modulo_2 = new Sub_Modulo(1, 2, true, true, 9,  true);
   private final Sub_Modulo Modulo_3 = new Sub_Modulo(5, 6, true, true, 11,  true);
   private final Sub_Modulo Modulo_4 = new Sub_Modulo(7, 8, true, true, 12 , true);
   private final AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
-    private final StructArrayPublisher<SwerveModuleState> publisher;
+  private final StructArrayPublisher<SwerveModuleState> publisher;
   private final SwerveDriveOdometry odometry= new SwerveDriveOdometry(Swerve.swervekinematics,gyro.getRotation2d(), getModulePositions());
   private Field2d field= new Field2d();
   
@@ -52,7 +47,7 @@ public class Sub_Swerve extends SubsystemBase {
 
   public Sub_Swerve() {
     new Thread(()->{try {Thread.sleep(1000); zeroHeading();}catch(Exception e ){}}).start();
-    CameraServer.startAutomaticCapture("Sprite_Cam",0);
+   // CameraServer.startAutomaticCapture("Sprite_Cam",0);
     
     publisher = NetworkTableInstance.getDefault()
       .getStructArrayTopic("/SwerveStates", SwerveModuleState.struct).publish(); 
@@ -136,7 +131,7 @@ public class Sub_Swerve extends SubsystemBase {
 
   public void setModuleStates(SwerveModuleState[] desiredModuleStates){
     //Se genera un arreglo de swerve module state para poder mandarlos a los diferentes modulos de acuerdo a posición 
-    SwerveDriveKinematics.desaturateWheelSpeeds(desiredModuleStates, 3);
+    SwerveDriveKinematics.desaturateWheelSpeeds(desiredModuleStates, 1);
     Modulo_1.setDesiredState(desiredModuleStates[0]);
     Modulo_2.setDesiredState(desiredModuleStates[1]);
     Modulo_3.setDesiredState(desiredModuleStates[2]);
