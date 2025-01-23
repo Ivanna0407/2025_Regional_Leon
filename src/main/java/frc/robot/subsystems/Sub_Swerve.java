@@ -6,11 +6,9 @@ package frc.robot.subsystems;
 
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.Constants.Swerve;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -22,6 +20,8 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.studica.frc.AHRS;
@@ -33,10 +33,10 @@ import com.studica.frc.AHRS.NavXComType;
 
 public class Sub_Swerve extends SubsystemBase {
   //En este subsistema se unen los 4 modulos y el giroscopio 
-  private final Sub_Modulo Modulo_1 = new Sub_Modulo(3, 4, true, true, 10, true);
-  private final Sub_Modulo Modulo_2 = new Sub_Modulo(1, 2, true, true, 9,  true);
-  private final Sub_Modulo Modulo_3 = new Sub_Modulo(5, 6, true, true, 11,  true);
-  private final Sub_Modulo Modulo_4 = new Sub_Modulo(7, 8, true, true, 12 , true);
+  private final Sub_Modulo Modulo_1 = new Sub_Modulo(3, 4, false, true, 10, false);
+  private final Sub_Modulo Modulo_2 = new Sub_Modulo(1, 2, true, true, 9,  false);
+  private final Sub_Modulo Modulo_3 = new Sub_Modulo(5, 6, true, true, 11,  false);
+  private final Sub_Modulo Modulo_4 = new Sub_Modulo(7, 8, true, true, 12 , false);
   private final AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
   private final StructArrayPublisher<SwerveModuleState> publisher;
   private final SwerveDriveOdometry odometry= new SwerveDriveOdometry(Swerve.swervekinematics,gyro.getRotation2d(), getModulePositions());
@@ -51,18 +51,19 @@ public class Sub_Swerve extends SubsystemBase {
     
     publisher = NetworkTableInstance.getDefault()
       .getStructArrayTopic("/SwerveStates", SwerveModuleState.struct).publish(); 
-   /*  try{
+      
+     try{
       RobotConfig config = RobotConfig.fromGUISettings();
 
       // Configure AutoBuilder
       AutoBuilder.configure(
         this::getPose, 
         this::resetPose, 
-        this::getSpeeds, 
+        this::getChassisSpeeds, 
         this::driveRobotRelative, 
         new PPHolonomicDriveController(
-          Constants.Swerve.translationConstants,
-          Constants.Swerve.rotationConstants
+          new PIDConstants(.05,0,0),
+          new PIDConstants(.22,0.0,0)
         ),
         config,
         () -> {
@@ -84,7 +85,8 @@ public class Sub_Swerve extends SubsystemBase {
 
     // Set up custom logging to add the current path to a field 2d widget
     PathPlannerLogging.setLogActivePathCallback((poses) -> field.getObject("path").setPoses(poses));
-*/
+    
+
     SmartDashboard.putData("Field", field);
   }
 
@@ -92,6 +94,8 @@ public class Sub_Swerve extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Heading", getHeadding());
+    SmartDashboard.putNumber("Yaw", gyro.getYaw());
+    SmartDashboard.putNumber("Pitch", getHeadding());
     publisher.set(new SwerveModuleState[]{Modulo_1.getState(),Modulo_2.getState(),Modulo_3.getState(),Modulo_4.getState()}); 
     field.setRobotPose(getPose());   
   }
@@ -131,7 +135,7 @@ public class Sub_Swerve extends SubsystemBase {
 
   public void setModuleStates(SwerveModuleState[] desiredModuleStates){
     //Se genera un arreglo de swerve module state para poder mandarlos a los diferentes modulos de acuerdo a posición 
-    SwerveDriveKinematics.desaturateWheelSpeeds(desiredModuleStates, 1);
+    SwerveDriveKinematics.desaturateWheelSpeeds(desiredModuleStates, 1.5);
     Modulo_1.setDesiredState(desiredModuleStates[0]);
     Modulo_2.setDesiredState(desiredModuleStates[1]);
     Modulo_3.setDesiredState(desiredModuleStates[2]);
