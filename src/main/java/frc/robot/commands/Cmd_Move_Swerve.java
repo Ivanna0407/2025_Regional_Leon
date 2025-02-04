@@ -14,12 +14,14 @@ import java.util.function.Supplier;
 public class Cmd_Move_Swerve extends Command {
   private final Sub_Swerve sub_Swerve;
   private final Supplier<Double>  Xaxis,Yaxis,giros;
+  private final int modo;
   private final Supplier<Boolean>fieldoriented;
-  public Cmd_Move_Swerve(Sub_Swerve Sub_Swerve,Supplier<Double> Xaxis,Supplier<Double> Yaxis,Supplier<Double> giros,Supplier<Boolean> fieldoriented) {
+  public Cmd_Move_Swerve(Sub_Swerve Sub_Swerve,Supplier<Double> Xaxis,Supplier<Double> Yaxis,Supplier<Double> giros,Supplier<Boolean> fieldoriented,int modo) {
     this.sub_Swerve=Sub_Swerve;
     this.Xaxis=Xaxis;
     this.Yaxis=Yaxis;
     this.giros=giros;
+    this.modo=modo;
     this.fieldoriented=fieldoriented;
     addRequirements(Sub_Swerve);
   }
@@ -31,7 +33,7 @@ public class Cmd_Move_Swerve extends Command {
   }
   @Override
   public void execute() {
-    double velocidadx=Xaxis.get()*-1;
+    double velocidadx=Xaxis.get();
     double velocidady=(Yaxis.get());
     double velocidad_giros=giros.get();
 
@@ -40,15 +42,28 @@ public class Cmd_Move_Swerve extends Command {
     if (Math.abs(giros.get())<0.1){velocidad_giros=0;}
 
     ChassisSpeeds chassisSpeeds;
-    /*if (fieldoriented.get()){
-      chassisSpeeds= ChassisSpeeds.fromFieldRelativeSpeeds(velocidady, velocidadx, velocidad_giros, sub_Swerve.get2Drotation());
+    
+    if (fieldoriented.get()){
+      chassisSpeeds= ChassisSpeeds.fromFieldRelativeSpeeds(velocidady*.2, velocidadx*.2, velocidad_giros*.2, sub_Swerve.get2Drotation());
     }
     else{
-    */
-      chassisSpeeds= new ChassisSpeeds(velocidady,velocidadx, velocidad_giros); //Es muy importante recordar que primero es y alias frente
-      //luego x que es derecha e izquierda y finalmente los giros sobre el eje 
+      if (modo==1){
+        chassisSpeeds= new ChassisSpeeds(velocidady*.3,velocidadx*.3, velocidad_giros*.3);
+      }
+      else{
+        if (modo==2){
+          chassisSpeeds= new ChassisSpeeds(velocidady*.6,velocidadx*.6, velocidad_giros*.6); //Es muy importante recordar que primero es y alias frente
+        //luego x que es derecha e izquierda y finalmente los giros sobre el eje 
+        }
+        else{
+        chassisSpeeds= new ChassisSpeeds(velocidady,velocidadx, velocidad_giros); //Es muy importante recordar que primero es y alias frente
         
-   // }
+        }//luego x que es derecha e izquierda y finalmente los giros sobre el eje 
+      }
+    
+      
+        
+    }
     //Manda un arreglo de estados de modulos que pasan por un objeto de Swerve drive kinematics para poder generar las velocidades
     SwerveModuleState[] moduleStates=Swerve.swervekinematics.toSwerveModuleStates(chassisSpeeds);
     sub_Swerve.setModuleStates(moduleStates);

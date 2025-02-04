@@ -27,16 +27,12 @@ import com.pathplanner.lib.util.PathPlannerLogging;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
-
-
-
-
 public class Sub_Swerve extends SubsystemBase {
   //En este subsistema se unen los 4 modulos y el giroscopio 
   private final Sub_Modulo Modulo_1 = new Sub_Modulo(3, 4, false, true, 10, false);
-  private final Sub_Modulo Modulo_2 = new Sub_Modulo(1, 2, true, true, 9,  false);
-  private final Sub_Modulo Modulo_3 = new Sub_Modulo(5, 6, true, true, 11,  false);
-  private final Sub_Modulo Modulo_4 = new Sub_Modulo(7, 8, true, true, 12 , false);
+  private final Sub_Modulo Modulo_2 = new Sub_Modulo(1, 2, false, true, 9,  false);
+  private final Sub_Modulo Modulo_3 = new Sub_Modulo(5, 6, false, true, 11,  false);
+  private final Sub_Modulo Modulo_4 = new Sub_Modulo(7, 8, false, true, 12 , false);
   private final AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
   private final StructArrayPublisher<SwerveModuleState> publisher;
   private final SwerveDriveOdometry odometry= new SwerveDriveOdometry(Swerve.swervekinematics,gyro.getRotation2d(), getModulePositions());
@@ -62,7 +58,7 @@ public class Sub_Swerve extends SubsystemBase {
         this::getChassisSpeeds, 
         this::driveRobotRelative, 
         new PPHolonomicDriveController(
-          new PIDConstants(.05,0,0),
+          new PIDConstants(.02,0,0),
           new PIDConstants(.22,0.0,0)
         ),
         config,
@@ -135,7 +131,7 @@ public class Sub_Swerve extends SubsystemBase {
 
   public void setModuleStates(SwerveModuleState[] desiredModuleStates){
     //Se genera un arreglo de swerve module state para poder mandarlos a los diferentes modulos de acuerdo a posición 
-    SwerveDriveKinematics.desaturateWheelSpeeds(desiredModuleStates, 1.5);
+    SwerveDriveKinematics.desaturateWheelSpeeds(desiredModuleStates, 1);// velocidad
     Modulo_1.setDesiredState(desiredModuleStates[0]);
     Modulo_2.setDesiredState(desiredModuleStates[1]);
     Modulo_3.setDesiredState(desiredModuleStates[2]);

@@ -11,12 +11,16 @@ import frc.robot.subsystems.Sub_Brazo;
 public class Cmd_Move_Brazo extends Command {
   /** Creates a new Cmd_Move_Brazo. */
   private final Sub_Brazo sub_Brazo ;
-  private final Supplier<Double> TriggerL, TriggerR;
-  public Cmd_Move_Brazo(Sub_Brazo Sub_Brazo, Supplier<Double> triggerl,Supplier<Double> triggerr) {
+  private final Supplier<Double> TriggerL, TriggerR, Joystick;
+  private final Supplier <Boolean>  X,B;
+  public Cmd_Move_Brazo(Sub_Brazo Sub_Brazo, Supplier<Double> triggerl,Supplier<Double> triggerr,Supplier<Double> joystick,Supplier<Boolean> x,Supplier<Boolean> b) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.sub_Brazo= Sub_Brazo;
     this.TriggerL= triggerl;
     this.TriggerR=triggerr;
+    this.Joystick=joystick;
+    this.B=b;
+    this.X=x;
     addRequirements(sub_Brazo);
   }
 
@@ -28,6 +32,18 @@ public class Cmd_Move_Brazo extends Command {
   @Override
   public void execute() {
     double speed = TriggerL.get()-TriggerR.get();
+    if (X.get()){
+      sub_Brazo.set_Coral(.5);
+    }
+    else{
+      if (B.get()){
+        sub_Brazo.set_Coral(-.5);
+      }
+      else{
+        sub_Brazo.set_Coral(0);
+      }
+    }
+    
     sub_Brazo.set_velocity(speed);
   }
 
@@ -35,6 +51,7 @@ public class Cmd_Move_Brazo extends Command {
   @Override
   public void end(boolean interrupted) {
     //sub_Brazo.set_velocity(0);
+    sub_Brazo.set_Coral(0);
   }
 
   // Returns true when the command should end.
