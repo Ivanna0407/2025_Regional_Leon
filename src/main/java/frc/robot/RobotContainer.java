@@ -20,7 +20,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final Sub_Swerve swerve = new  Sub_Swerve();
-  //private final Sub_Brazo brazo = new Sub_Brazo();
+  private final Sub_Brazo brazo = new Sub_Brazo();
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final XboxController joydrive= new XboxController(0);
   private final XboxController subdrive = new XboxController(1);
@@ -31,8 +31,8 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
-    swerve.setDefaultCommand(new Cmd_Move_Swerve(swerve,() -> joydrive.getLeftX(),() -> joydrive.getLeftY(), () -> joydrive.getRightX(),() -> joydrive.getXButton(),1));
-    //brazo.setDefaultCommand(new Cmd_Move_Brazo(brazo, () -> joydrive.getLeftTriggerAxis(), () -> joydrive.getRightTriggerAxis(), () -> subdrive.getLeftX(),() -> subdrive.getXButton(),() -> subdrive.getBButton()));
+    swerve.setDefaultCommand(new Cmd_Move_Swerve(swerve,() -> joydrive.getLeftX(),() -> joydrive.getLeftY(), () -> joydrive.getRightX(),() -> joydrive.getRightBumperButton(),3,() -> joydrive.getYButton()));
+    brazo.setDefaultCommand(new Cmd_Move_Brazo(brazo, () -> joydrive.getLeftTriggerAxis(), () -> joydrive.getRightTriggerAxis(), () -> subdrive.getLeftX(),() -> joydrive.getAButton(),() -> joydrive.getBButton()));
     //autoChooser= AutoBuilder.buildAutoChooser();
     //autoChooser= AutoBuilder.buildAutoChooser("New_Auto");
    // SmartDashboard.putData(autoChooser);
@@ -57,5 +57,6 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     return new PathPlannerAuto("Simple");
+    
   }
 }

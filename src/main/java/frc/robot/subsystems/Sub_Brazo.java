@@ -19,8 +19,8 @@ import frc.robot.Constants.Subsitemas;
 
 public class Sub_Brazo extends SubsystemBase {
   /** Creates a new Sub_Brazo. */
-  private final SparkMax Brazo_1 = new SparkMax(13, MotorType.kBrushless);
-  private final SparkMax Brazo_2 = new SparkMax(14, MotorType.kBrushless);
+  //private final SparkMax Brazo_1 = new SparkMax(13, MotorType.kBrushless);
+  private final SparkMax Brazo_2 = new SparkMax(16, MotorType.kBrushless);
   private final SparkMax Coral = new SparkMax(15, MotorType.kBrushless);
   //private final SparkMax Muñeca = new SparkMax(16, MotorType.kBrushless);
   //private final RelativeEncoder Enc_Muñeca = Muñeca.getEncoder();
@@ -35,7 +35,7 @@ public class Sub_Brazo extends SubsystemBase {
     Config_Coral.inverted(false);
     Config_Coral.inverted(false);
     //Config_Muñeca.encoder.positionConversionFactor(Subsitemas.Conversion_muñeca);
-    Brazo_1.configure(Config_brazo, com.revrobotics.spark.SparkBase.ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    //Brazo_1.configure(Config_brazo, com.revrobotics.spark.SparkBase.ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     Brazo_2.configure(Config_brazo, com.revrobotics.spark.SparkBase.ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     Coral.configure(Config_Coral, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   //  Muñeca.configure(Config_Muñeca, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -50,8 +50,8 @@ public class Sub_Brazo extends SubsystemBase {
 
 
   public void set_velocity(double speeds){
-    Brazo_1.set(speeds);
-    Brazo_2.set(speeds);
+    //Brazo_1.set(speeds);
+    Brazo_2.set(speeds*.5);
   }
 
   public void set_Coral(double out){
@@ -62,7 +62,5 @@ public class Sub_Brazo extends SubsystemBase {
     //Muñeca.set(speed);
   }
 
-  public double get_encoder_brazo(){
-    return Brazo_1.getEncoder().getPosition();
-  }
+  
 }

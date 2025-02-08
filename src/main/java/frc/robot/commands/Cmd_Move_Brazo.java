@@ -33,11 +33,11 @@ public class Cmd_Move_Brazo extends Command {
   public void execute() {
     double speed = TriggerL.get()-TriggerR.get();
     if (X.get()){
-      sub_Brazo.set_Coral(.5);
+      sub_Brazo.set_Coral(.3);
     }
     else{
       if (B.get()){
-        sub_Brazo.set_Coral(-.5);
+        sub_Brazo.set_Coral(-.3);
       }
       else{
         sub_Brazo.set_Coral(0);

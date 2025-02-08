@@ -53,13 +53,20 @@ public class Sub_Modulo extends SubsystemBase {
         configturn.encoder.velocityConversionFactor(Swerve.encoder_a_radianes_por_segundo);
         
     
-        PIDgiro= new PIDController(.26, .00, 0.00);//.366 cosmo//.26 aire
+        PIDgiro= new PIDController(.27, .00, 0.00);//.366 cosmo//.26 aire
         PIDgiro.enableContinuousInput(-Math.PI, Math.PI);//Permite trabajar con los valores de 180 a -180 
 
         driveMotor.configure(configdrive, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         turningMotor.configure(configturn, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         resetEncoders();
         
+    }
+
+    public double getcorrientedrive(){
+        return driveMotor.getOutputCurrent();
+    }
+    public double getcorrienteturn(){
+        return turningMotor.getOutputCurrent();
     }
 
     public double getDrivePosition(){
@@ -110,7 +117,7 @@ public class Sub_Modulo extends SubsystemBase {
         //y obtener la ruta más rápida 
         state.optimize(enoderrotation);
         
-        driveMotor.set(state.speedMetersPerSecond/1.5);//3.5 es la velocidad máxima del sistema, se debe checar, 4.47 teorico
+        driveMotor.set(state.speedMetersPerSecond/1.3);//3.5 es la velocidad máxima del sistema, se debe checar, 4.47 teorico
         //https://www.chiefdelphi.com/t/how-to-calculate-the-max-free-speed-of-a-swerve/400741/4
         turningMotor.set(PIDgiro.calculate(getTurningPosition(),state.angle.getRadians()));
         

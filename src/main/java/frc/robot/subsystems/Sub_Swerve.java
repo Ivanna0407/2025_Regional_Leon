@@ -19,6 +19,8 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
+
+import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
@@ -34,9 +36,11 @@ public class Sub_Swerve extends SubsystemBase {
   private final Sub_Modulo Modulo_3 = new Sub_Modulo(5, 6, false, true, 11,  false);
   private final Sub_Modulo Modulo_4 = new Sub_Modulo(7, 8, false, true, 12 , false);
   private final AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
+  private final Pigeon2 Pigeon = new Pigeon2(13);
   private final StructArrayPublisher<SwerveModuleState> publisher;
   private final SwerveDriveOdometry odometry= new SwerveDriveOdometry(Swerve.swervekinematics,gyro.getRotation2d(), getModulePositions());
   private Field2d field= new Field2d();
+  
   
 
   
@@ -44,6 +48,7 @@ public class Sub_Swerve extends SubsystemBase {
   public Sub_Swerve() {
     new Thread(()->{try {Thread.sleep(1000); zeroHeading();}catch(Exception e ){}}).start();
    // CameraServer.startAutomaticCapture("Sprite_Cam",0);
+   
     
     publisher = NetworkTableInstance.getDefault()
       .getStructArrayTopic("/SwerveStates", SwerveModuleState.struct).publish(); 
@@ -58,8 +63,8 @@ public class Sub_Swerve extends SubsystemBase {
         this::getChassisSpeeds, 
         this::driveRobotRelative, 
         new PPHolonomicDriveController(
-          new PIDConstants(.02,0,0),
-          new PIDConstants(.22,0.0,0)
+          new PIDConstants(.00000005,0,0),
+          new PIDConstants(.26,0.0,0)
         ),
         config,
         () -> {
@@ -90,10 +95,18 @@ public class Sub_Swerve extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Heading", getHeadding());
-    SmartDashboard.putNumber("Yaw", gyro.getYaw());
     SmartDashboard.putNumber("Pitch", getHeadding());
     publisher.set(new SwerveModuleState[]{Modulo_1.getState(),Modulo_2.getState(),Modulo_3.getState(),Modulo_4.getState()}); 
-    field.setRobotPose(getPose());   
+    SmartDashboard.putNumber("pigeon", Pigeon.getYaw().getValueAsDouble());
+    field.setRobotPose(getPose());  
+    SmartDashboard.putNumber("AmperajeTM1", Modulo_1.getcorrienteturn());
+    SmartDashboard.putNumber("AmperajeTM2", Modulo_2.getcorrienteturn());
+    SmartDashboard.putNumber("AmperajeTM3", Modulo_3.getcorrienteturn());
+    SmartDashboard.putNumber("AmperajeTM4", Modulo_4.getcorrienteturn());
+    SmartDashboard.putNumber("AmperajeDM1", Modulo_1.getcorrientedrive());
+    SmartDashboard.putNumber("AmperajeDM2", Modulo_2.getcorrientedrive());
+    SmartDashboard.putNumber("AmperajeDM3", Modulo_3.getcorrientedrive());
+    SmartDashboard.putNumber("AmperajeDM4", Modulo_4.getcorrientedrive());
   }
 
   public void zeroHeading(){
@@ -101,7 +114,7 @@ public class Sub_Swerve extends SubsystemBase {
   }
 
   public double getHeadding(){
-    return Math.IEEEremainder(gyro.getAngle(),360);
+    return Math.IEEEremainder(gyro.getAngle()*-1,360);
   }
 
   public Rotation2d get2Drotation(){
@@ -131,7 +144,7 @@ public class Sub_Swerve extends SubsystemBase {
 
   public void setModuleStates(SwerveModuleState[] desiredModuleStates){
     //Se genera un arreglo de swerve module state para poder mandarlos a los diferentes modulos de acuerdo a posición 
-    SwerveDriveKinematics.desaturateWheelSpeeds(desiredModuleStates, 1);// velocidad
+    SwerveDriveKinematics.desaturateWheelSpeeds(desiredModuleStates, 4);// velocidad
     Modulo_1.setDesiredState(desiredModuleStates[0]);
     Modulo_2.setDesiredState(desiredModuleStates[1]);
     Modulo_3.setDesiredState(desiredModuleStates[2]);
