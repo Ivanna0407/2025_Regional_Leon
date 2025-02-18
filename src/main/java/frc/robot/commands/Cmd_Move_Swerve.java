@@ -14,14 +14,12 @@ import java.util.function.Supplier;
 public class Cmd_Move_Swerve extends Command {
   private final Sub_Swerve sub_Swerve;
   private final Supplier<Double>  Xaxis,Yaxis,giros;
-  private final int modo;
   private final Supplier<Boolean>fieldoriented,slow;
-  public Cmd_Move_Swerve(Sub_Swerve Sub_Swerve,Supplier<Double> Xaxis,Supplier<Double> Yaxis,Supplier<Double> giros,Supplier<Boolean> fieldoriented,int modo,Supplier<Boolean> slow) {
+  public Cmd_Move_Swerve(Sub_Swerve Sub_Swerve,Supplier<Double> Xaxis,Supplier<Double> Yaxis,Supplier<Double> giros,Supplier<Boolean> fieldoriented,Supplier<Boolean> slow) {
     this.sub_Swerve=Sub_Swerve;
     this.Xaxis=Xaxis;
     this.Yaxis=Yaxis;
     this.giros=giros;
-    this.modo=modo;
     this.fieldoriented=fieldoriented;
     this.slow=slow;
     addRequirements(Sub_Swerve);
@@ -48,11 +46,9 @@ public class Cmd_Move_Swerve extends Command {
       fium=.3;
     }
     else{
-      fium=.7;
+      fium=.75;
     }
 
-
-    
     if (fieldoriented.get()){
       chassisSpeeds= ChassisSpeeds.fromFieldRelativeSpeeds(velocidady*fium, velocidadx*fium, velocidad_giros*fium, sub_Swerve.get2Drotation());
     }

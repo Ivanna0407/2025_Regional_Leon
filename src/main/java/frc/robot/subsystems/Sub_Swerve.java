@@ -31,18 +31,15 @@ import com.studica.frc.AHRS.NavXComType;
 
 public class Sub_Swerve extends SubsystemBase {
   //En este subsistema se unen los 4 modulos y el giroscopio 
-  private final Sub_Modulo Modulo_1 = new Sub_Modulo(3, 4, false, true, 10, false);
-  private final Sub_Modulo Modulo_2 = new Sub_Modulo(1, 2, false, true, 9,  false);
-  private final Sub_Modulo Modulo_3 = new Sub_Modulo(5, 6, false, true, 11,  false);
+  private final Sub_Modulo Modulo_1 = new Sub_Modulo(3, 4, true, true, 10, false);
+  private final Sub_Modulo Modulo_2 = new Sub_Modulo(1, 2, true, true, 9,  false);
+  private final Sub_Modulo Modulo_3 = new Sub_Modulo(5, 6, true, true, 11,  false);
   private final Sub_Modulo Modulo_4 = new Sub_Modulo(7, 8, false, true, 12 , false);
   private final AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
-  private final Pigeon2 Pigeon = new Pigeon2(13);
+  private final Pigeon2 Pigeon= new Pigeon2(13);
   private final StructArrayPublisher<SwerveModuleState> publisher;
   private final SwerveDriveOdometry odometry= new SwerveDriveOdometry(Swerve.swervekinematics,gyro.getRotation2d(), getModulePositions());
   private Field2d field= new Field2d();
-  
-  
-
   
 
   public Sub_Swerve() {
@@ -63,7 +60,7 @@ public class Sub_Swerve extends SubsystemBase {
         this::getChassisSpeeds, 
         this::driveRobotRelative, 
         new PPHolonomicDriveController(
-          new PIDConstants(.00000005,0,0),
+          new PIDConstants(5,0,0),
           new PIDConstants(.26,0.0,0)
         ),
         config,
@@ -95,9 +92,8 @@ public class Sub_Swerve extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Heading", getHeadding());
-    SmartDashboard.putNumber("Pitch", getHeadding());
+    SmartDashboard.putNumber("Pigeon heading", getHead());
     publisher.set(new SwerveModuleState[]{Modulo_1.getState(),Modulo_2.getState(),Modulo_3.getState(),Modulo_4.getState()}); 
-    SmartDashboard.putNumber("pigeon", Pigeon.getYaw().getValueAsDouble());
     field.setRobotPose(getPose());  
     SmartDashboard.putNumber("AmperajeTM1", Modulo_1.getcorrienteturn());
     SmartDashboard.putNumber("AmperajeTM2", Modulo_2.getcorrienteturn());
@@ -113,13 +109,28 @@ public class Sub_Swerve extends SubsystemBase {
     gyro.reset();
   }
 
+  public double getYawrad(){
+    return gyro.getYaw()*(Math.PI/180);
+  }
+
   public double getHeadding(){
-    return Math.IEEEremainder(gyro.getAngle()*-1,360);
+    return Pigeon.getYaw().getValueAsDouble()%360;
+  }
+
+  public double getHead(){
+    return Math.IEEEremainder(Pigeon.getYaw().getValueAsDouble(),360);
+  }
+  public void resetHead(){
+    Pigeon.reset();
   }
 
   public Rotation2d get2Drotation(){
     //Permite cambiar de angulos a un objeto de Rotation 2D
     return Rotation2d.fromDegrees(getHeadding());
+  }
+
+  public Rotation2d get2DPigeonRotation(){
+    return Pigeon.getRotation2d();
   }
 
   public Pose2d getPose(){

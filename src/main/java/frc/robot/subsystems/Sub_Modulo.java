@@ -53,7 +53,7 @@ public class Sub_Modulo extends SubsystemBase {
         configturn.encoder.velocityConversionFactor(Swerve.encoder_a_radianes_por_segundo);
         
     
-        PIDgiro= new PIDController(.27, .00, 0.00);//.366 cosmo//.26 aire
+        PIDgiro= new PIDController(.52, .00, 0.00);//.366 cosmo//.26 aire
         PIDgiro.enableContinuousInput(-Math.PI, Math.PI);//Permite trabajar con los valores de 180 a -180 
 
         driveMotor.configure(configdrive, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
