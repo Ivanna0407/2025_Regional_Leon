@@ -47,6 +47,8 @@ public final class Constants {
   public static class Subsitemas{
     //public static final double Conversion_muñeca = 360/81;
     public static final double conversion_elevador =1/9.52;
+    public static final double conversion_wrist =1/9;
+    public static final double conversion_brazo = 1/3;
   }
 
  

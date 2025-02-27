@@ -3,8 +3,6 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.subsystems;
-
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -18,8 +16,8 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
-
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
@@ -49,6 +47,7 @@ public class Sub_Swerve extends SubsystemBase {
     
     publisher = NetworkTableInstance.getDefault()
       .getStructArrayTopic("/SwerveStates", SwerveModuleState.struct).publish(); 
+      /* 
       
      try{
       RobotConfig config = RobotConfig.fromGUISettings();
@@ -84,6 +83,7 @@ public class Sub_Swerve extends SubsystemBase {
     // Set up custom logging to add the current path to a field 2d widget
     PathPlannerLogging.setLogActivePathCallback((poses) -> field.getObject("path").setPoses(poses));
     
+    */
 
     SmartDashboard.putData("Field", field);
   }
@@ -93,7 +93,7 @@ public class Sub_Swerve extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Heading", getHeadding());
     SmartDashboard.putNumber("Pigeon heading", getHead());
-    publisher.set(new SwerveModuleState[]{Modulo_1.getState(),Modulo_2.getState(),Modulo_3.getState(),Modulo_4.getState()}); 
+   // publisher.set(new SwerveModuleState[]{Modulo_1.getState(),Modulo_2.getState(),Modulo_3.getState(),Modulo_4.getState()}); 
     field.setRobotPose(getPose());  
     SmartDashboard.putNumber("AmperajeTM1", Modulo_1.getcorrienteturn());
     SmartDashboard.putNumber("AmperajeTM2", Modulo_2.getcorrienteturn());
@@ -200,4 +200,24 @@ public class Sub_Swerve extends SubsystemBase {
     positions[3]=Modulo_4.getState();
     return positions;
     }
+    ////////////////////////LIMELIGHT////////////////////////
+  public double getTx() {
+    return NetworkTableInstance.getDefault().getTable("limelight-abtomat").getEntry("tx").getDouble(0);
+  }
+
+  public double getTy() {
+    return NetworkTableInstance.getDefault().getTable("limelight-abtomat").getEntry("ty").getDouble(0);
+  }
+
+  public double getTa() {
+    return NetworkTableInstance.getDefault().getTable("limelight-abtomat").getEntry("ta").getDouble(10);
+  }
+
+  public double getTid() {
+    return NetworkTableInstance.getDefault().getTable("limelight-abtomat").getEntry("tid").getDouble(0);
+  }
+
+  public void SetVisionMode(Double m) {
+    NetworkTableInstance.getDefault().getTable("limelight-abtomat").getEntry("pipeline").setNumber(m);
+  }
   }

@@ -38,15 +38,15 @@ public class Cmd_Move_Swerve extends Command {
     double velocidad_giros=giros.get();
     double fium;
 
-    if (Math.abs(Xaxis.get())<0.1){velocidadx=0;}
-    if (Math.abs(Yaxis.get())<0.1){velocidady=0;}
-    if (Math.abs(giros.get())<0.1){velocidad_giros=0;}
+    if (Math.abs(Xaxis.get())<0.05){velocidadx=0;}
+    if (Math.abs(Yaxis.get())<0.05){velocidady=0;}
+    if (Math.abs(giros.get())<0.05){velocidad_giros=0;}
 
     if (slow.get()){
       fium=.3;
     }
     else{
-      fium=.75;
+      fium=.65;
     }
 
     if (fieldoriented.get()){
