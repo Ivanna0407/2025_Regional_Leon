@@ -6,8 +6,11 @@ package frc.robot;
 
 
 import frc.robot.commands.Cmd_Alga_Teleop;
+import frc.robot.commands.Cmd_Coral_PID;
 import frc.robot.commands.Cmd_Elevador_Teleop;
 import frc.robot.commands.Cmd_Move_Swerve;
+import frc.robot.commands.Cmd_Specific_State;
+import frc.robot.commands.Cmd_Wait;
 import frc.robot.commands.Cmd_giro;
 import frc.robot.commands.Cmd_resetheading;
 import frc.robot.subsystems.Sub_Algas;
@@ -16,10 +19,15 @@ import frc.robot.subsystems.Sub_Swerve;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 public class RobotContainer {
@@ -52,6 +60,7 @@ public class RobotContainer {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
   joydrive.a().whileTrue(new Cmd_giro(swerve, 170*(Math.PI/180)));
   joydrive.start().whileTrue(new Cmd_resetheading(swerve));
+  subdrive.y().whileTrue(new Cmd_Coral_PID(Elevador, 90));
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
@@ -65,7 +74,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return new PathPlannerAuto("Simple");
-    
+    return new Cmd_Specific_State(swerve, new ChassisSpeeds(1,0,0), 2);
+    //return null;
   }
 }

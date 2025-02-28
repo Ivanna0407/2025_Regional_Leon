@@ -4,35 +4,32 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Sub_Elevador;
+import frc.robot.Constants.Swerve;
+import frc.robot.subsystems.Sub_Swerve;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class Cmd_Coral_PID extends Command {
-  /** Creates a new Cmd_Coral_PID. */
-  private final Sub_Elevador Elevador;
-  private final double setpoint;
-  double error_coral,kp;
-  public Cmd_Coral_PID(Sub_Elevador elevador, double setpoint) {
+public class Cmd_Go_froward extends Command {
+  /** Creates a new Cmd_Go_froward. */
+  private final Sub_Swerve swerve;
+  public Cmd_Go_froward(Sub_Swerve swerve) {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.Elevador=elevador;
-    this.setpoint=setpoint;
+    this.swerve=swerve;
+    addRequirements(swerve);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    kp=.0004;
-    error_coral=setpoint-Elevador.getEncoderWrist();
-    double speed;
-    speed=error_coral*kp;
-    Elevador.set_Wrist(speed);
+   ChassisSpeeds chassisSpeeds= ChassisSpeeds.fromFieldRelativeSpeeds(.5, 0, 0, swerve.get2Drotation());
+   SwerveModuleState[] moduleStates=Swerve.swervekinematics.toSwerveModuleStates(chassisSpeeds);
+    swerve.setModuleStates(moduleStates);
   }
 
   // Called once the command ends or is interrupted.
@@ -42,11 +39,6 @@ public class Cmd_Coral_PID extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (error_coral<.5){
-      return true;
-    }
-    else{
-      return false;
-    }
+    return false;
   }
 }

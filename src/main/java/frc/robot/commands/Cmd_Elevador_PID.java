@@ -5,12 +5,18 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.Sub_Elevador;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class Cmd_Elevador_PID extends Command {
   /** Creates a new Cmd_Elevador_PID. */
-  public Cmd_Elevador_PID() {
+  private final Sub_Elevador Elevador;
+  private final double setpoint;
+  double kp,error;
+  public Cmd_Elevador_PID(Sub_Elevador elevador, double Setpoint) {
     // Use addRequirements() here to declare subsystem dependencies.
+    this.Elevador=elevador;
+    this.setpoint=Setpoint;
   }
 
   // Called when the command is initially scheduled.
@@ -19,7 +25,13 @@ public class Cmd_Elevador_PID extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    kp=.2;
+    error = setpoint - Elevador.getElevatorEncoder();
+    double speed;
+    speed=error*kp;
+    Elevador.setElevador(speed);
+  }
 
   // Called once the command ends or is interrupted.
   @Override
@@ -28,6 +40,11 @@ public class Cmd_Elevador_PID extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    if (error<.4){
+      return true;
+    }
+    else{
+      return false;
+    }
   }
 }

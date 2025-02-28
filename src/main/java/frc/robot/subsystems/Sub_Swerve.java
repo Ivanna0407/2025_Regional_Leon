@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.Swerve;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -47,11 +48,11 @@ public class Sub_Swerve extends SubsystemBase {
     
     publisher = NetworkTableInstance.getDefault()
       .getStructArrayTopic("/SwerveStates", SwerveModuleState.struct).publish(); 
-      /* 
-      
-     try{
-      RobotConfig config = RobotConfig.fromGUISettings();
-
+       
+      //try{
+      //RobotConfig config = RobotConfig.fromGUISettings();
+      //}
+ /* 
       // Configure AutoBuilder
       AutoBuilder.configure(
         this::getPose, 
@@ -59,8 +60,8 @@ public class Sub_Swerve extends SubsystemBase {
         this::getChassisSpeeds, 
         this::driveRobotRelative, 
         new PPHolonomicDriveController(
-          new PIDConstants(5,0,0),
-          new PIDConstants(.26,0.0,0)
+          new PIDConstants(.5, 0, 0),
+          new PIDConstants(.5, 0,0)
         ),
         config,
         () -> {
@@ -81,9 +82,15 @@ public class Sub_Swerve extends SubsystemBase {
     }
 
     // Set up custom logging to add the current path to a field 2d widget
-    PathPlannerLogging.setLogActivePathCallback((poses) -> field.getObject("path").setPoses(poses));
+    //PathPlannerLogging.setLogActivePathCallback((poses) -> field.getObject("path").setPoses(poses));
+     
+      */
+     
+
+    // Set up custom logging to add the current path to a field 2d widget
+   // PathPlannerLogging.setLogActivePathCallback((poses) -> field.getObject("path").setPoses(poses));
     
-    */
+    
 
     SmartDashboard.putData("Field", field);
   }
@@ -118,7 +125,7 @@ public class Sub_Swerve extends SubsystemBase {
   }
 
   public double getHead(){
-    return Math.IEEEremainder(Pigeon.getYaw().getValueAsDouble(),360);
+    return Math.IEEEremainder(Pigeon.getYaw().getValueAsDouble()*-1,360);
   }
   public void resetHead(){
     Pigeon.reset();
@@ -163,11 +170,12 @@ public class Sub_Swerve extends SubsystemBase {
   }
 
   public void driveRobotRelative(ChassisSpeeds robotRelativeSpeeds) {
-    ChassisSpeeds targetSpeeds = ChassisSpeeds.discretize(robotRelativeSpeeds, 0.02);
+    //ChassisSpeeds targetSpeeds = ChassisSpeeds.discretize(robotRelativeSpeeds, 0.02);
 
-    SwerveModuleState[] targetStates = Swerve.swervekinematics.toSwerveModuleStates(targetSpeeds);
+    SwerveModuleState[] targetStates = Swerve.swervekinematics.toSwerveModuleStates(robotRelativeSpeeds);
     setModuleStates(targetStates);
   }
+    
 
   public void resetAllEncoders(){
     Modulo_1.resetEncoders();

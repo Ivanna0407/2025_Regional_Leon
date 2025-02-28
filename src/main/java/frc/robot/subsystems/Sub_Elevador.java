@@ -10,10 +10,12 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Subsitemas;
@@ -25,6 +27,10 @@ public class Sub_Elevador extends SubsystemBase {
   private final SparkMax Wrist = new SparkMax(14, MotorType.kBrushless); //Motor Muñeca
   private final SparkMaxConfig Config_Coral = new SparkMaxConfig();//Config sparks
   private final SparkMaxConfig Config_Wrist = new SparkMaxConfig();
+  private final RelativeEncoder Wrist_Encoder = Wrist.getEncoder();
+  //Limitswitch
+  DigitalInput Top_elevador= new DigitalInput(0);
+  DigitalInput Down_elevador = new DigitalInput(1);
   public boolean pieza;
   public Sub_Elevador() {
     var motor_config = new MotorOutputConfigs();
@@ -40,6 +46,7 @@ public class Sub_Elevador extends SubsystemBase {
     Config_Wrist.idleMode(IdleMode.kBrake);
     Config_Wrist.inverted(false);
     Wrist.configure(Config_Wrist, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    Wrist_Encoder.setPosition(0);
   }
 
   @Override
@@ -49,7 +56,9 @@ public class Sub_Elevador extends SubsystemBase {
     SmartDashboard.putNumber("Encoderwrist", getEncoderWrist());
     SmartDashboard.putNumber("Corriente Coral",Coral.getOutputCurrent());
     SmartDashboard.putBoolean("Pieza",pieza);
-    if(Coral.getOutputCurrent()>=60){pieza=true;}
+    SmartDashboard.putBoolean("Top elvevador", Top_elevador.get());
+    SmartDashboard.putBoolean("Down elvevador", Down_elevador.get());
+    if(Coral.getOutputCurrent()>=50){pieza=true;}
   }
 
   public double getElevatorEncoder(){
@@ -60,7 +69,7 @@ public class Sub_Elevador extends SubsystemBase {
     if (getElevatorEncoder()<=0 && speed>0){
       Motor_elevador.set(0);
     }
-    if (getElevatorEncoder()>=5 && speed<0){
+    if (getElevatorEncoder()>=4.7 && speed<0){
       Motor_elevador.set(0);
     }
     else{
@@ -80,7 +89,7 @@ public class Sub_Elevador extends SubsystemBase {
   }
 
   public double getEncoderWrist(){
-    return Wrist.getEncoder().getPosition()* Subsitemas.conversion_wrist; //Falta la conversion de la muñeca 
+    return Wrist_Encoder.getPosition()* Subsitemas.conversion_wrist*-1;
   }
   public void resetEncoderWrist(){
     Wrist.getEncoder().setPosition(0);
