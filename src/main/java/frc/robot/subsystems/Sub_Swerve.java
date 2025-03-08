@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.Constants.Swerve;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -17,14 +16,11 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
-import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.util.PathPlannerLogging;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
@@ -33,83 +29,69 @@ public class Sub_Swerve extends SubsystemBase {
   private final Sub_Modulo Modulo_1 = new Sub_Modulo(3, 4, true, true, 10, false);
   private final Sub_Modulo Modulo_2 = new Sub_Modulo(1, 2, true, true, 9,  false);
   private final Sub_Modulo Modulo_3 = new Sub_Modulo(5, 6, true, true, 11,  false);
-  private final Sub_Modulo Modulo_4 = new Sub_Modulo(7, 8, false, true, 12 , false);
+  private final Sub_Modulo Modulo_4 = new Sub_Modulo(7, 8, true, true, 12 , false);
   private final AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
-  private final Pigeon2 Pigeon= new Pigeon2(13);
   private final StructArrayPublisher<SwerveModuleState> publisher;
   private final SwerveDriveOdometry odometry= new SwerveDriveOdometry(Swerve.swervekinematics,gyro.getRotation2d(), getModulePositions());
   private Field2d field= new Field2d();
+  double[] array;
+  RobotConfig config;
   
 
   public Sub_Swerve() {
     new Thread(()->{try {Thread.sleep(1000); zeroHeading();}catch(Exception e ){}}).start();
-   // CameraServer.startAutomaticCapture("Sprite_Cam",0);
-   
-    
     publisher = NetworkTableInstance.getDefault()
       .getStructArrayTopic("/SwerveStates", SwerveModuleState.struct).publish(); 
-       
-      //try{
-      //RobotConfig config = RobotConfig.fromGUISettings();
-      //}
- /* 
-      // Configure AutoBuilder
-      AutoBuilder.configure(
-        this::getPose, 
-        this::resetPose, 
-        this::getChassisSpeeds, 
-        this::driveRobotRelative, 
-        new PPHolonomicDriveController(
-          new PIDConstants(.5, 0, 0),
-          new PIDConstants(.5, 0,0)
-        ),
-        config,
-        () -> {
-            // Boolean supplier that controls when the path will be mirrored for the red alliance
-            // This will flip the path being followed to the red side of the field.
-            // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-
-            var alliance = DriverStation.getAlliance();
-            if (alliance.isPresent()) {
-                return alliance.get() == DriverStation.Alliance.Red;
-            }
-            return false;
-        },
-        this
-      );
-    }catch(Exception e){
-      DriverStation.reportError("Failed to load PathPlanner config and configure AutoBuilder", e.getStackTrace());
+      
+    try{
+      config = RobotConfig.fromGUISettings();
+    } catch (Exception e) {
+      // Handle exception as needed
+      e.printStackTrace();
     }
 
-    // Set up custom logging to add the current path to a field 2d widget
-    //PathPlannerLogging.setLogActivePathCallback((poses) -> field.getObject("path").setPoses(poses));
-     
-      */
-     
+    // Configure AutoBuilder last
+    AutoBuilder.configure(
+            this::getPose, // Robot pose supplier
+            this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
+            this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+            this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+            new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
+                    new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+                    new PIDConstants(52.0, 0.0, 0.0) // Rotation PID constants
+            ),
+            config, // The robot configuration
+            () -> {
+              // Boolean supplier that controls when the path will be mirrored for the red alliance
+              // This will flip the path being followed to the red side of the field.
+              // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
 
-    // Set up custom logging to add the current path to a field 2d widget
-   // PathPlannerLogging.setLogActivePathCallback((poses) -> field.getObject("path").setPoses(poses));
-    
-    
-
-    SmartDashboard.putData("Field", field);
+              var alliance = DriverStation.getAlliance();
+              if (alliance.isPresent()) {
+                return alliance.get() == DriverStation.Alliance.Red;
+              }
+              return false;
+            },
+            this // Reference to this subsystem to set requirements
+    );
   }
+  
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Heading", getHeadding());
-    SmartDashboard.putNumber("Pigeon heading", getHead());
-   // publisher.set(new SwerveModuleState[]{Modulo_1.getState(),Modulo_2.getState(),Modulo_3.getState(),Modulo_4.getState()}); 
-    field.setRobotPose(getPose());  
-    SmartDashboard.putNumber("AmperajeTM1", Modulo_1.getcorrienteturn());
-    SmartDashboard.putNumber("AmperajeTM2", Modulo_2.getcorrienteturn());
-    SmartDashboard.putNumber("AmperajeTM3", Modulo_3.getcorrienteturn());
-    SmartDashboard.putNumber("AmperajeTM4", Modulo_4.getcorrienteturn());
-    SmartDashboard.putNumber("AmperajeDM1", Modulo_1.getcorrientedrive());
-    SmartDashboard.putNumber("AmperajeDM2", Modulo_2.getcorrientedrive());
-    SmartDashboard.putNumber("AmperajeDM3", Modulo_3.getcorrientedrive());
-    SmartDashboard.putNumber("AmperajeDM4", Modulo_4.getcorrientedrive());
+    SmartDashboard.putNumber("TX",getTx());
+    SmartDashboard.putNumber("Ty", getTy());
+    SmartDashboard.putNumber("Ta", getTa());
+    SmartDashboard.putNumber("Tid", getTid());
+    SmartDashboard.putNumber("Txnc", getTxnc());
+    //SmartDashboard.putNumberArray("Array", getarray_limelight());
+    //System.out.println(getarray_limelight());
+    field.setRobotPose(getPose()); 
+    SmartDashboard.putNumber("YAW", getarray_limelight());
+    SmartDashboard.putNumber("TX array", getXarray_limelight());
+    SmartDashboard.putNumber("TZ array", getZarray_limelight());
+    
   }
 
   public void zeroHeading(){
@@ -120,25 +102,15 @@ public class Sub_Swerve extends SubsystemBase {
     return gyro.getYaw()*(Math.PI/180);
   }
 
-  public double getHeadding(){
-    return Pigeon.getYaw().getValueAsDouble()%360;
-  }
-
-  public double getHead(){
-    return Math.IEEEremainder(Pigeon.getYaw().getValueAsDouble()*-1,360);
-  }
-  public void resetHead(){
-    Pigeon.reset();
+  public double Head(){
+    return Math.IEEEremainder(gyro.getYaw()*-1, 360);
   }
 
   public Rotation2d get2Drotation(){
     //Permite cambiar de angulos a un objeto de Rotation 2D
-    return Rotation2d.fromDegrees(getHeadding());
+    return Rotation2d.fromDegrees(Head());
   }
 
-  public Rotation2d get2DPigeonRotation(){
-    return Pigeon.getRotation2d();
-  }
 
   public Pose2d getPose(){
     return odometry.getPoseMeters();
@@ -170,9 +142,8 @@ public class Sub_Swerve extends SubsystemBase {
   }
 
   public void driveRobotRelative(ChassisSpeeds robotRelativeSpeeds) {
-    //ChassisSpeeds targetSpeeds = ChassisSpeeds.discretize(robotRelativeSpeeds, 0.02);
-
-    SwerveModuleState[] targetStates = Swerve.swervekinematics.toSwerveModuleStates(robotRelativeSpeeds);
+    ChassisSpeeds targetSpeeds = ChassisSpeeds.discretize(robotRelativeSpeeds, 0.02);
+    SwerveModuleState[] targetStates = Swerve.swervekinematics.toSwerveModuleStates(targetSpeeds);
     setModuleStates(targetStates);
   }
     
@@ -228,4 +199,23 @@ public class Sub_Swerve extends SubsystemBase {
   public void SetVisionMode(Double m) {
     NetworkTableInstance.getDefault().getTable("limelight-abtomat").getEntry("pipeline").setNumber(m);
   }
+
+  public double getTxnc(){
+    return NetworkTableInstance.getDefault().getTable("limelight-abtomat").getEntry("txnc").getDouble(0);
   }
+
+  public double getarray_limelight() {
+    array = NetworkTableInstance.getDefault().getTable("limelight-abtomat").getEntry("targetpose_robotspace").getDoubleArray(new double[6]);
+    return array[4];
+  }
+  public double getZarray_limelight() {
+    array = NetworkTableInstance.getDefault().getTable("limelight-abtomat").getEntry("targetpose_robotspace").getDoubleArray(new double[6]);
+    return array[2];
+  }
+  public double getXarray_limelight() {
+    array = NetworkTableInstance.getDefault().getTable("limelight-abtomat").getEntry("targetpose_robotspace").getDoubleArray(new double[6]);
+    return array[0];
+  }
+  
+}
+  

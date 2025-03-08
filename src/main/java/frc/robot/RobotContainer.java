@@ -7,9 +7,12 @@ package frc.robot;
 
 import frc.robot.commands.Cmd_Alga_Teleop;
 import frc.robot.commands.Cmd_Coral_PID;
+import frc.robot.commands.Cmd_Elevador_PID;
 import frc.robot.commands.Cmd_Elevador_Teleop;
 import frc.robot.commands.Cmd_Move_Swerve;
+import frc.robot.commands.Cmd_Shoot_Coral_Auto;
 import frc.robot.commands.Cmd_Specific_State;
+import frc.robot.commands.Cmd_Vision;
 import frc.robot.commands.Cmd_Wait;
 import frc.robot.commands.Cmd_giro;
 import frc.robot.commands.Cmd_resetheading;
@@ -29,6 +32,10 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+
+
+
+
 
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
@@ -61,6 +68,10 @@ public class RobotContainer {
   joydrive.a().whileTrue(new Cmd_giro(swerve, 170*(Math.PI/180)));
   joydrive.start().whileTrue(new Cmd_resetheading(swerve));
   subdrive.y().whileTrue(new Cmd_Coral_PID(Elevador, 90));
+  subdrive.a().whileTrue(new Cmd_Coral_PID(Elevador, 0));
+  subdrive.leftStick().whileTrue(new Cmd_Coral_PID(Elevador, -90));
+  subdrive.start().whileTrue(new Cmd_Elevador_PID(Elevador, 2.1));
+  joydrive.b().whileTrue(new Cmd_Vision(swerve, 0));
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
@@ -74,7 +85,16 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return new Cmd_Specific_State(swerve, new ChassisSpeeds(1,0,0), 2);
+    return new Cmd_Specific_State(swerve, new ChassisSpeeds(.75,0,0), 2);
+   /* 
+   return new SequentialCommandGroup(new Cmd_Specific_State(swerve, new ChassisSpeeds(.75,0,0),2),
+   new Cmd_Specific_State(swerve, new ChassisSpeeds(0,.75,0), 1),
+   new Cmd_Specific_State(swerve, new ChassisSpeeds(-.75,0,0), .25),
+   new Cmd_Shoot_Coral_Auto(Elevador, .2),
+   new Cmd_Wait(1),
+   new Cmd_Coral_PID(Elevador, 0));
+   */
+
     //return null;
   }
 }

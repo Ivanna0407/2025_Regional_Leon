@@ -66,15 +66,14 @@ public class Sub_Elevador extends SubsystemBase {
   }
 
   public void setElevador(double speed){
-    if (getElevatorEncoder()<=0 && speed>0){
-      Motor_elevador.set(0);
+    if (Down_elevador.get() && speed>0){
+      speed=0;
     }
-    if (getElevatorEncoder()>=4.7 && speed<0){
-      Motor_elevador.set(0);
+      
+    if(!Top_elevador.get()&& speed<0){
+      speed=0;
     }
-    else{
     Motor_elevador.set(speed);
-    }
   }
 
   public void resetEncoderElevador(){
@@ -83,7 +82,7 @@ public class Sub_Elevador extends SubsystemBase {
 
   public void set_Coral(double out){
     if(pieza==true && out>0){
-    pieza=true;
+    pieza=false;//false?
     }
     Coral.set(out);
   }
@@ -96,6 +95,9 @@ public class Sub_Elevador extends SubsystemBase {
   }
   public void set_Wrist(double speed){
     Wrist.set(speed);
+  }
+  public double get_Speed_Coral(){
+    return Coral.get();
   }
 
 }

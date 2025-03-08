@@ -43,9 +43,9 @@ public class Cmd_Specific_State extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    System.out.println("1");
+    //System.out.println("1");
     sub_Swerve.driveRobotRelative(speeds);
-    System.out.println("2");
+    //System.out.println("2");
   }
 
   // Called once the command ends or is interrupted.
@@ -57,8 +57,9 @@ public class Cmd_Specific_State extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    System.out.println("Fin");
-    if (timer.get()>2){
+    //System.out.println("Fin");
+    if (timer.get()>2.5){
+      System.out.println("Fin");
       return true;
     }
     return false;

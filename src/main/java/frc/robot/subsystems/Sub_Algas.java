@@ -11,6 +11,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Subsitemas;
 
@@ -36,9 +37,14 @@ public class Sub_Algas extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    
   }
 
   public void set_Brazo(double speed_right, double speed_left){
+    if(Motor_BrazoL.getEncoder().getPosition()<0 && speed_left>0){
+      speed_left=0;
+      speed_right=0;
+    }
     Motor_BrazoR.set(speed_right);
     Motor_BrazoL.set(-speed_left);
   }

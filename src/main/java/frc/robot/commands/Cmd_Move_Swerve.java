@@ -33,9 +33,9 @@ public class Cmd_Move_Swerve extends Command {
   ChassisSpeeds chassisSpeeds;
   @Override
   public void execute() {
-    double velocidadx=Xaxis.get();
-    double velocidady=(Yaxis.get());
-    double velocidad_giros=giros.get();
+    double velocidadx=Xaxis.get()*-1;
+    double velocidady=(Yaxis.get())*-1;
+    double velocidad_giros=giros.get()*-1;
     double fium;
 
     if (Math.abs(Xaxis.get())<0.05){velocidadx=0;}
@@ -46,7 +46,7 @@ public class Cmd_Move_Swerve extends Command {
       fium=.3;
     }
     else{
-      fium=.65;
+      fium=.3;
     }
 
     if (fieldoriented.get()){
