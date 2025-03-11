@@ -8,12 +8,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Sub_Elevador;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class Cmd_Coral_PID extends Command {
+public class Cmd_Wrist_PID extends Command {
   /** Creates a new Cmd_Coral_PID. */
   private final Sub_Elevador Elevador;
   private final double setpoint;
   double error_coral,kp;
-  public Cmd_Coral_PID(Sub_Elevador elevador, double setpoint) {
+  public Cmd_Wrist_PID(Sub_Elevador elevador, double setpoint) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.Elevador=elevador;
     this.setpoint=setpoint;
@@ -45,7 +45,7 @@ public class Cmd_Coral_PID extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (Math.abs(error_coral)<5){
+    if (Math.abs(error_coral)<3){
       return true;
     }
     else{

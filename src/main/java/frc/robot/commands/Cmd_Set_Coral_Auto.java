@@ -3,40 +3,29 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.commands;
-import edu.wpi.first.wpilibj.Timer;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Sub_Elevador;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class Cmd_Elevador_PID extends Command {
-  /** Creates a new Cmd_Elevador_PID. */
+public class Cmd_Set_Coral_Auto extends Command {
+  /** Creates a new Cmd_Set_Coral_Auto. */
   private final Sub_Elevador Elevador;
-  private final double setpoint;
-  double kp,error,ki,last_time,error_i,integral_zone,dt;
-  public Cmd_Elevador_PID(Sub_Elevador elevador, double Setpoint) {
+  double speed;
+  public Cmd_Set_Coral_Auto(Sub_Elevador elevador, double speed) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.Elevador=elevador;
-    this.setpoint=Setpoint;
+    addRequirements(elevador);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    integral_zone=setpoint*.1;
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    ki=.02;
-    kp=.3;
-    dt=Timer.getFPGATimestamp()-last_time;
-    error = setpoint - Elevador.getElevatorEncoder();
-    double speed;
-    speed=error*kp+error_i*ki;
-    if(Math.abs(error)< integral_zone){error_i+=error*dt;}
-    Elevador.setElevador(speed);
-    last_time=Timer.getFPGATimestamp();
+    Elevador.set_Coral(speed);
   }
 
   // Called once the command ends or is interrupted.
@@ -46,10 +35,6 @@ public class Cmd_Elevador_PID extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    
-      if (setpoint-Elevador.getElevatorEncoder()<.1){
-        return true;
-      }
-      else{return false;}
+    return (Elevador.get_Speed_Coral()==speed);
   }
 }

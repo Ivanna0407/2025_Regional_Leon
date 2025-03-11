@@ -44,7 +44,7 @@ public class Cmd_Vision extends Command {
     }
     errorx= (setpointx - tx);
     errory= (setpointy - ty);
-    if(Math.abs(yaw)<5){
+    if(Math.abs(yaw)<10){
       error_giro=0;
     }
     else{
@@ -57,8 +57,6 @@ public class Cmd_Vision extends Command {
     ChassisSpeeds chassisSpeeds= new ChassisSpeeds(linear_speed,rotation_speed, giro_speed);
     SwerveModuleState[] moduleStates=frc.robot.Constants.Swerve.swervekinematics.toSwerveModuleStates(chassisSpeeds);
     Swerve.setModuleStates(moduleStates);
-
-
   }
 
   // Called once the command ends or is interrupted.

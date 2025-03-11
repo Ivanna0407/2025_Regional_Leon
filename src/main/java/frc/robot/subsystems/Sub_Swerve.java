@@ -8,7 +8,10 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Swerve;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -16,7 +19,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.StructArrayPublisher;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
@@ -31,18 +33,17 @@ public class Sub_Swerve extends SubsystemBase {
   private final Sub_Modulo Modulo_3 = new Sub_Modulo(5, 6, true, true, 11,  false);
   private final Sub_Modulo Modulo_4 = new Sub_Modulo(7, 8, true, true, 12 , false);
   private final AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
-  private final StructArrayPublisher<SwerveModuleState> publisher;
   private final SwerveDriveOdometry odometry= new SwerveDriveOdometry(Swerve.swervekinematics,gyro.getRotation2d(), getModulePositions());
   private Field2d field= new Field2d();
   double[] array;
   RobotConfig config;
   
+  private final AprilTagFieldLayout apriltag= AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
+  
+  
 
   public Sub_Swerve() {
-    new Thread(()->{try {Thread.sleep(1000); zeroHeading();}catch(Exception e ){}}).start();
-    publisher = NetworkTableInstance.getDefault()
-      .getStructArrayTopic("/SwerveStates", SwerveModuleState.struct).publish(); 
-      
+    new Thread(()->{try {Thread.sleep(1000); zeroHeading();}catch(Exception e ){}}).start(); 
     try{
       config = RobotConfig.fromGUISettings();
     } catch (Exception e) {
@@ -85,8 +86,6 @@ public class Sub_Swerve extends SubsystemBase {
     SmartDashboard.putNumber("Ta", getTa());
     SmartDashboard.putNumber("Tid", getTid());
     SmartDashboard.putNumber("Txnc", getTxnc());
-    //SmartDashboard.putNumberArray("Array", getarray_limelight());
-    //System.out.println(getarray_limelight());
     field.setRobotPose(getPose()); 
     SmartDashboard.putNumber("YAW", getarray_limelight());
     SmartDashboard.putNumber("TX array", getXarray_limelight());
@@ -115,6 +114,7 @@ public class Sub_Swerve extends SubsystemBase {
   public Pose2d getPose(){
     return odometry.getPoseMeters();
   }
+
 
   public void resetPose(Pose2d pose2d){
     odometry.resetPosition(get2Drotation(), getModulePositions(), pose2d);
@@ -205,16 +205,20 @@ public class Sub_Swerve extends SubsystemBase {
   }
 
   public double getarray_limelight() {
-    array = NetworkTableInstance.getDefault().getTable("limelight-abtomat").getEntry("targetpose_robotspace").getDoubleArray(new double[6]);
+    array = NetworkTableInstance.getDefault().getTable("limelight-abtomat").getEntry("targetpose_cameraspace").getDoubleArray(new double[6]);
     return array[4];
   }
   public double getZarray_limelight() {
-    array = NetworkTableInstance.getDefault().getTable("limelight-abtomat").getEntry("targetpose_robotspace").getDoubleArray(new double[6]);
+    array = NetworkTableInstance.getDefault().getTable("limelight-abtomat").getEntry("targetpose_cameraspace").getDoubleArray(new double[6]);
     return array[2];
   }
   public double getXarray_limelight() {
-    array = NetworkTableInstance.getDefault().getTable("limelight-abtomat").getEntry("targetpose_robotspace").getDoubleArray(new double[6]);
+    array = NetworkTableInstance.getDefault().getTable("limelight-abtomat").getEntry("targetpose_cameraspace").getDoubleArray(new double[6]);
     return array[0];
+  }
+
+  public Pose2d getAprilTagPose(int ArpiltagID){
+    return apriltag.getTagPose(ArpiltagID).get().toPose2d();
   }
   
 }

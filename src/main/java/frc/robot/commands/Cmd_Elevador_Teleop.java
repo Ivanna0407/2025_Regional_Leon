@@ -30,7 +30,9 @@ public class Cmd_Elevador_Teleop extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    Elevador.setOpenLoopSElevador(.5);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -41,7 +43,7 @@ public class Cmd_Elevador_Teleop extends Command {
     if(Math.abs(speed_elevador)<.2){
       speed_elevador=0;
     }
-    Elevador.setElevador(speed_elevador*.50);
+    Elevador.setElevador(speed_elevador*.8);
     //Calculo speed intake
     if (X.get()) {
       Elevador.set_Coral(.2);

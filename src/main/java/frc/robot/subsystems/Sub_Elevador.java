@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -30,7 +31,7 @@ public class Sub_Elevador extends SubsystemBase {
   private final RelativeEncoder Wrist_Encoder = Wrist.getEncoder();
   //Limitswitch
   DigitalInput Top_elevador= new DigitalInput(0);
-  DigitalInput Down_elevador = new DigitalInput(1);
+  DigitalInput Down_elevador = new DigitalInput(9);
   public boolean pieza;
   public Sub_Elevador() {
     var motor_config = new MotorOutputConfigs();
@@ -58,7 +59,7 @@ public class Sub_Elevador extends SubsystemBase {
     SmartDashboard.putBoolean("Pieza",pieza);
     SmartDashboard.putBoolean("Top elvevador", Top_elevador.get());
     SmartDashboard.putBoolean("Down elvevador", Down_elevador.get());
-    if(Coral.getOutputCurrent()>=50){pieza=true;}
+    if(Coral.getOutputCurrent()>=30){pieza=true;}
   }
 
   public double getElevatorEncoder(){
@@ -66,6 +67,7 @@ public class Sub_Elevador extends SubsystemBase {
   }
 
   public void setElevador(double speed){
+     
     if (Down_elevador.get() && speed>0){
       speed=0;
     }
@@ -73,11 +75,18 @@ public class Sub_Elevador extends SubsystemBase {
     if(!Top_elevador.get()&& speed<0){
       speed=0;
     }
+      
     Motor_elevador.set(speed);
   }
 
   public void resetEncoderElevador(){
     Motor_elevador.setPosition(0);
+  }
+
+  public void setOpenLoopSElevador(double S){
+    var openloop= new OpenLoopRampsConfigs();
+    openloop.DutyCycleOpenLoopRampPeriod = S;
+    Motor_elevador.getConfigurator().apply(openloop);
   }
 
   public void set_Coral(double out){
