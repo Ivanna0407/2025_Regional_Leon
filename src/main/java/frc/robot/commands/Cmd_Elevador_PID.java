@@ -28,8 +28,8 @@ public class Cmd_Elevador_PID extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    ki=.02;
-    kp=.3;
+    ki=.008;
+    kp=.55;
     dt=Timer.getFPGATimestamp()-last_time;
     error = setpoint - Elevador.getElevatorEncoder();
     double speed;
@@ -47,7 +47,7 @@ public class Cmd_Elevador_PID extends Command {
   @Override
   public boolean isFinished() {
     
-      if (setpoint-Elevador.getElevatorEncoder()<.1){
+      if (setpoint-Elevador.getElevatorEncoder()<.4){
         return true;
       }
       else{return false;}

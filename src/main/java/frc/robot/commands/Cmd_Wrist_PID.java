@@ -28,7 +28,7 @@ public class Cmd_Wrist_PID extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    kp=.0038;
+    kp=.0075;
     error_coral=setpoint-Elevador.getEncoderWrist();
     double speed;
     speed=error_coral*kp;
@@ -45,7 +45,7 @@ public class Cmd_Wrist_PID extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (Math.abs(error_coral)<3){
+    if (Math.abs(error_coral)<4){
       return true;
     }
     else{

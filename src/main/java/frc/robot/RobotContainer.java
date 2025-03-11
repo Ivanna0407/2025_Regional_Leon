@@ -70,8 +70,8 @@ public class RobotContainer {
   subdrive.a().whileTrue(new Cmd_Wrist_PID(Elevador, 0));
   subdrive.leftStick().whileTrue(new Cmd_Wrist_PID(Elevador, -90));
   joydrive.b().whileTrue(new Cmd_Vision(swerve, 0));
-  subdrive.y().whileTrue(new SequentialCommandGroup(new ParallelCommandGroup(new Cmd_Elevador_PID(Elevador, 1.5),
-  new Cmd_Wrist_PID(Elevador, 90)),new Cmd_Take_Coral_Auto(Elevador)));
+  subdrive.y().whileTrue(new SequentialCommandGroup(new ParallelCommandGroup(new Cmd_Elevador_PID(Elevador, 1.56),
+  new Cmd_Wrist_PID(Elevador, -90)),new Cmd_Take_Coral_Auto(Elevador)));
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.

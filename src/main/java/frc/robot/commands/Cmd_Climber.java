@@ -4,13 +4,21 @@
 
 package frc.robot.commands;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.Sub_Climber;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class Cmd_Climber extends Command {
   /** Creates a new Cmd_Climber. */
-  public Cmd_Climber() {
+  private final Sub_Climber climber;
+  private final Supplier<Double> Climber_speed;
+  public Cmd_Climber(Sub_Climber climber, Supplier<Double> Climber_speed) {
     // Use addRequirements() here to declare subsystem dependencies.
+    this.climber=climber;
+    this.Climber_speed=Climber_speed;
+    addRequirements(climber);
   }
 
   // Called when the command is initially scheduled.
@@ -19,7 +27,14 @@ public class Cmd_Climber extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    double speed=Climber_speed.get();
+    if(Math.abs(speed)<.2){
+      speed=0;
+    }
+    climber.setClimber(speed);
+    
+  }
 
   // Called once the command ends or is interrupted.
   @Override
