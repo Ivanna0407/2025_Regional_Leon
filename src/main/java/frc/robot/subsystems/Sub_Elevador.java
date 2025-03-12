@@ -30,7 +30,7 @@ public class Sub_Elevador extends SubsystemBase {
   private final SparkMaxConfig Config_Wrist = new SparkMaxConfig();
   private final RelativeEncoder Wrist_Encoder = Wrist.getEncoder();
   //Limitswitch
-  DigitalInput Top_elevador= new DigitalInput(0);
+  DigitalInput Top_elevador= new DigitalInput(1);
   DigitalInput Down_elevador = new DigitalInput(9);
   public boolean pieza;
   public Sub_Elevador() {

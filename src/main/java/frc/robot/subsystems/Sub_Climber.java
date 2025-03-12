@@ -30,8 +30,8 @@ public class Sub_Climber extends SubsystemBase {
   }
 
   public void setClimber(double speed_climb){
-    Motor_Climer.set(speed_climb);
-    Motor_Climer_1.set(speed_climb);
+    Motor_Climer.set(speed_climb*.5);
+    Motor_Climer_1.set(speed_climb*.5);
   }
 
   public double getClimberEncoder(){

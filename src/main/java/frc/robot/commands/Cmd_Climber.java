@@ -13,11 +13,12 @@ import frc.robot.subsystems.Sub_Climber;
 public class Cmd_Climber extends Command {
   /** Creates a new Cmd_Climber. */
   private final Sub_Climber climber;
-  private final Supplier<Double> Climber_speed;
-  public Cmd_Climber(Sub_Climber climber, Supplier<Double> Climber_speed) {
+  private final Supplier<Double> RT,LT;
+  public Cmd_Climber(Sub_Climber climber, Supplier<Double> Climber_speed,Supplier<Double> LT) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.climber=climber;
-    this.Climber_speed=Climber_speed;
+    this.RT=Climber_speed;
+    this.LT=LT;
     addRequirements(climber);
   }
 
@@ -28,7 +29,7 @@ public class Cmd_Climber extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double speed=Climber_speed.get();
+    double speed=RT.get()-LT.get();
     if(Math.abs(speed)<.2){
       speed=0;
     }
