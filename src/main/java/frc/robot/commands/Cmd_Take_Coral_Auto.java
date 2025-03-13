@@ -6,19 +6,24 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Sub_Elevador;
+import frc.robot.subsystems.Sub_LEDs;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class Cmd_Take_Coral_Auto extends Command {
   /** Creates a new Cmd_Take_Coral_Auto. */
   private final Sub_Elevador elevador;
-  public Cmd_Take_Coral_Auto(Sub_Elevador Elevador) {
+  private final Sub_LEDs leds;
+  public Cmd_Take_Coral_Auto(Sub_Elevador Elevador,Sub_LEDs leds) {
     // Use addRequirements() here to declare subsystem dependencies.
+    this.leds=leds;
     this.elevador=Elevador;
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    leds.set_wait();
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -35,9 +40,6 @@ public class Cmd_Take_Coral_Auto extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(elevador.pieza==true){
-      return true;
-    }
-    else{return false;}
+    return elevador.currentPeak();
   }
 }

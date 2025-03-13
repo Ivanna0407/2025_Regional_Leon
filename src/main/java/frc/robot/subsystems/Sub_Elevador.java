@@ -16,6 +16,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -29,11 +30,13 @@ public class Sub_Elevador extends SubsystemBase {
   private final SparkMaxConfig Config_Coral = new SparkMaxConfig();//Config sparks
   private final SparkMaxConfig Config_Wrist = new SparkMaxConfig();
   private final RelativeEncoder Wrist_Encoder = Wrist.getEncoder();
+  
   //Limitswitch
-  DigitalInput Top_elevador= new DigitalInput(1);
+  DigitalInput Top_elevador= new DigitalInput(0);
   DigitalInput Down_elevador = new DigitalInput(9);
   public boolean pieza;
   public Sub_Elevador() {
+    CameraServer.startAutomaticCapture("Cam",0);
     var motor_config = new MotorOutputConfigs();
     Motor_elevador.getConfigurator().apply(motor_config);
     Motor_elevador.setNeutralMode(NeutralModeValue.Brake);
@@ -74,7 +77,9 @@ public class Sub_Elevador extends SubsystemBase {
       
     if(!Top_elevador.get()&& speed<0){
       speed=0;
+      resetEncoderElevador();
     }
+
       
     Motor_elevador.set(speed);
   }
@@ -107,6 +112,10 @@ public class Sub_Elevador extends SubsystemBase {
   }
   public double get_Speed_Coral(){
     return Coral.get();
+  }
+
+  public boolean currentPeak(){
+    return Coral.getOutputCurrent() >= 50;
   }
 
 }

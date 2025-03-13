@@ -46,7 +46,7 @@ public class Cmd_Move_Swerve extends Command {
       fium=.3;
     }
     else{
-      fium=.3;
+      fium=.9;
     }
 
     if (fieldoriented.get()){

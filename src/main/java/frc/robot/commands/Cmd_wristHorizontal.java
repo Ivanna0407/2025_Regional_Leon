@@ -4,44 +4,57 @@
 
 package frc.robot.commands;
 
-import java.io.Serial;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Sub_Elevador;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class Cmd_Set_Coral_Auto extends Command {
-  /** Creates a new Cmd_Set_Coral_Auto. */
+public class Cmd_wristHorizontal extends Command {
+  /** Creates a new Cmd_Coral_PID. */
   private final Sub_Elevador Elevador;
-  double speed;
-  public Cmd_Set_Coral_Auto(Sub_Elevador elevador, double _speed) {
+  private double setpoint;
+  double error_coral,kp;
+  public Cmd_wristHorizontal(Sub_Elevador elevador) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.Elevador=elevador;
-    addRequirements(elevador);
-    speed = _speed;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    System.out.println("initComand");
+    double actualPoint = Elevador.getEncoderWrist();
+    if(Math.abs(180 - Math.abs(actualPoint)) < Math.abs(actualPoint)){
+      setpoint = -180;
+    }else{
+      setpoint = 0;
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Elevador.set_Coral(speed);
+    kp=.0074;
+    error_coral=setpoint-Elevador.getEncoderWrist();
+    double speed;
+    speed=error_coral*kp;
+    Elevador.set_Wrist(-speed);
+    
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    System.out.println("initComand");
+
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (Elevador.get_Speed_Coral()==speed);
+    if (Math.abs(error_coral)<4){
+      System.out.println("wrist");
+      return true;
+    }
+    else{
+      return false;
+    }
   }
 }

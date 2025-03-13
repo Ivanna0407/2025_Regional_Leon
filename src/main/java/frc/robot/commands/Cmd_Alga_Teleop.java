@@ -44,11 +44,11 @@ public class Cmd_Alga_Teleop extends Command {
       }
     }
     if(left.get()){
-      Alga.set_Alga(.5);
+      Alga.set_Alga(.6);
     }
     else{
       if(right.get()){
-        Alga.set_Alga(-.5);
+        Alga.set_Alga(-.6);
       }
       else{
         Alga.set_Alga(0);

@@ -14,7 +14,7 @@ public class Cmd_Take_Alge_Auto extends Command {
   public Cmd_Take_Alge_Auto(Sub_Algas Algas) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.Algas=Algas;
-    addRequirements(Algas);
+   // addRequirements(Algas);
   }
 
   // Called when the command is initially scheduled.
@@ -36,7 +36,7 @@ public class Cmd_Take_Alge_Auto extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(Algas.alga==true){
+    if(Algas.getAlgaCurrent()>=50){
       Algas.set_Alga(0);
       return true;
     }

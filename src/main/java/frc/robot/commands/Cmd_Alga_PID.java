@@ -17,7 +17,7 @@ public class Cmd_Alga_PID extends Command {
     // Use addRequirements() here to declare subsystem dependencies.
     this.Alga=Alga;
     this.setpoint=setpoint;
-    addRequirements(Alga);
+    //addRequirements(Alga);
   }
 
   // Called when the command is initially scheduled.
@@ -27,7 +27,7 @@ public class Cmd_Alga_PID extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    kp=0.001;
+    kp=0.03;
     error= setpoint- Alga.getEncoderBrazo();
     double speed;
     speed= error*kp;
@@ -41,6 +41,6 @@ public class Cmd_Alga_PID extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return error<.5;
+    return Math.abs(error) <.5;
   }
 }
