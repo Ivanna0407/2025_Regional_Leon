@@ -7,7 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Test"
+            "pathName": "move"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "setL1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Out Coral"
           }
         }
       ]

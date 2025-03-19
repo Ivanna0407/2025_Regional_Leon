@@ -62,7 +62,7 @@ public class Sub_Elevador extends SubsystemBase {
     SmartDashboard.putBoolean("Pieza",pieza);
     SmartDashboard.putBoolean("Top elvevador", Top_elevador.get());
     SmartDashboard.putBoolean("Down elvevador", Down_elevador.get());
-    if(Coral.getOutputCurrent()>=30){pieza=true;}
+    if(Coral.getOutputCurrent()>=50){pieza=true;}
   }
 
   public double getElevatorEncoder(){

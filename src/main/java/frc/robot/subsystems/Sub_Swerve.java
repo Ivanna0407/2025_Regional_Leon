@@ -5,13 +5,11 @@
 package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Swerve;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -81,16 +79,8 @@ public class Sub_Swerve extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("TX",getTx());
-    SmartDashboard.putNumber("Ty", getTy());
-    SmartDashboard.putNumber("Ta", getTa());
-    SmartDashboard.putNumber("Tid", getTid());
-    SmartDashboard.putNumber("Txnc", getTxnc());
     field.setRobotPose(getPose()); 
-    SmartDashboard.putNumber("YAW", getarray_limelight());
-    SmartDashboard.putNumber("TX array", getXarray_limelight());
-    SmartDashboard.putNumber("TZ array", getZarray_limelight());
-    
+    //odometry.update(get2Drotation(), getModulePositions());
   }
 
   public void zeroHeading(){

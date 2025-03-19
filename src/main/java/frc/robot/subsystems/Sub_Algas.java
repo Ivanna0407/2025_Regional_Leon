@@ -38,9 +38,10 @@ public class Sub_Algas extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    if (Motor_Alga.getOutputCurrent()>=40){alga=true;}
+    if (Motor_Alga.getOutputCurrent()>=55){alga=true;}
     SmartDashboard.putNumber("Alga_Encoder", Encoder_brazo.getPosition());
     SmartDashboard.putNumber("Corriente", getAlgaCurrent());
+    SmartDashboard.putBoolean("Alga", alga);
   }
 
   public void set_Brazo(double speed_right){

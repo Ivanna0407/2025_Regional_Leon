@@ -8,20 +8,23 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.Swerve;
+import frc.robot.subsystems.Sub_LEDs;
 import frc.robot.subsystems.Sub_Swerve;
 import java.util.function.Supplier;
 
 public class Cmd_Move_Swerve extends Command {
   private final Sub_Swerve sub_Swerve;
+  private final Sub_LEDs Leds;
   private final Supplier<Double>  Xaxis,Yaxis,giros;
   private final Supplier<Boolean>fieldoriented,slow;
-  public Cmd_Move_Swerve(Sub_Swerve Sub_Swerve,Supplier<Double> Xaxis,Supplier<Double> Yaxis,Supplier<Double> giros,Supplier<Boolean> fieldoriented,Supplier<Boolean> slow) {
+  public Cmd_Move_Swerve(Sub_Swerve Sub_Swerve,Supplier<Double> Xaxis,Supplier<Double> Yaxis,Supplier<Double> giros,Supplier<Boolean> fieldoriented,Supplier<Boolean> slow,Sub_LEDs leds) {
     this.sub_Swerve=Sub_Swerve;
     this.Xaxis=Xaxis;
     this.Yaxis=Yaxis;
     this.giros=giros;
     this.fieldoriented=fieldoriented;
     this.slow=slow;
+    this.Leds=leds;
     addRequirements(Sub_Swerve);
   }
 
@@ -37,6 +40,13 @@ public class Cmd_Move_Swerve extends Command {
     double velocidady=(Yaxis.get())*-1;
     double velocidad_giros=giros.get()*-1;
     double fium;
+    if(Math.abs(velocidadx)>.3){
+      Leds.set_idle();
+    }else{
+      if (Math.abs(velocidadx)>0.6){
+        Leds.set_speed();
+      }
+    }
 
     if (Math.abs(Xaxis.get())<0.05){velocidadx=0;}
     if (Math.abs(Yaxis.get())<0.05){velocidady=0;}
@@ -46,7 +56,7 @@ public class Cmd_Move_Swerve extends Command {
       fium=.3;
     }
     else{
-      fium=.9;
+      fium=1;
     }
 
     if (fieldoriented.get()){
