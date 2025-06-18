@@ -46,11 +46,11 @@ public class Cmd_Elevador_Teleop extends Command {
     Elevador.setElevador(speed_elevador*.8);
     //Calculo speed intake
     if (X.get()) {
-      Elevador.set_Coral(.2);
+      Elevador.set_Coral(.15);
     }                                
     else{
       if (B.get()){
-        Elevador.set_Coral(-.2);
+        Elevador.set_Coral(-.15);
       }
       else{Elevador.set_Coral(0);}
     }
